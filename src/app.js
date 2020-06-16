@@ -19,10 +19,7 @@ app.use(cors())
 
 app.use(function validateBearerToken(req, res, next) {
     const apiToken = process.env.API_TOKEN
-    // const authToken = req.get('Authorization')
-    const authToken = '631ba05c-ab6f-11ea-bb37-0242ac130002'
-    console.log(apiToken)
-    console.log(authToken)
+    const authToken = req.get('Authorization')
 
     if (!authToken || authToken.split(' ')[1] !== apiToken) {
         logger.error(`Unauthorized request to path: ${req.path}`)
@@ -43,7 +40,6 @@ app.use(function errorHandler(err, req, res, next) {
     if (process.env.NODE_ENV === 'production') {
         response = { error: { message: 'server error' } }
     } else {
-        console.error(err)
         response = { error: { message: 'server error' } }
     }
     res.status(500).json(response)
