@@ -19,28 +19,28 @@ bookmarksRouter
             logger.error('URL is required')
             return res
                 .status(400)
-                .send('Invalid data')
+                .send("'url' is required")
         }
 
         if (!title) {
             logger.error('Title is required')
             return res
                 .status(400)
-                .send('Invalid data')
+                .send("'title' is required")
         }
     
         if (!rating) {
             logger.error('Rating is required')
             return res
                 .status(400)
-                .send('Invalid data')
+                .send("'rating' is required")
         }
 
         if (!description) {
             logger.error('Description is required')
             return res
                 .status(400)
-                .send('Invalid data')
+                .send("'description' is required")
         }
 
         if (!Number.isInteger(rating) || rating < 0 || rating > 5) {
@@ -101,7 +101,7 @@ bookmarksRouter
             logger.error(`Bookmark with id ${id} not found.`)
             return res
                 .status(404)
-                .send('Not found')
+                .send('Bookmark not found')
         }
 
         bookmarks.splice(bookmarkIndex, 1)
