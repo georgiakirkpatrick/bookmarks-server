@@ -4,12 +4,10 @@ const store = require('../src/store')
 describe('Bookmarks Endpoints', () => {
   let bookmarksCopy
   beforeEach('copy the bookmarks', () => {
-    // copy the bookmarks so we can restore them after testing
     bookmarksCopy = store.bookmarks.slice()
   })
 
   afterEach('restore the bookmarks', () => {
-    // restore the bookmarks back to original
     store.bookmarks = bookmarksCopy
     })
 })    
@@ -29,14 +27,14 @@ describe(`Unauthorized requests`, () => {
     })
 
     it(`responds with 401 Unauthorized for GET /bookmarks/:id`, () => {
-      const secondBookmark = store.bookmarks[1]
+      const firstBookmark = store.bookmarks[0]
       return supertest(app)
-        .get(`/bookmarks/${secondBookmark.id}`)
+        .get(`/bookmarks/${firstBookmark.id}`)
         .expect(401, { error: 'Unauthorized request' })
     })
 
     it(`responds with 401 Unauthorized for DELETE /bookmarks/:id`, () => {
-      const aBookmark = store.bookmarks[1]
+      const aBookmark = store.bookmarks[0]
       return supertest(app)
         .delete(`/bookmarks/${aBookmark.id}`)
         .expect(401, { error: 'Unauthorized request' })
@@ -54,27 +52,27 @@ describe('GET /bookmarks', () => {
 
 describe('GET /bookmarks/:id', () => {
     it('gets the bookmark by ID from the store', () => {
-      const secondBookmark = store.bookmarks[1]
+      const firstBookmark = store.bookmarks[0]
       return supertest(app)
-        .get(`/bookmarks/${secondBookmark.id}`)
+        .get(`/bookmarks/${firstBookmark.id}`)
         .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-        .expect(200, secondBookmark)
+        .expect(200, firstBookmark)
     })
 
     it(`returns 404 whe bookmark doesn't exist`, () => {
       return supertest(app)
         .get(`/bookmarks/doesnt-exist`)
         .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-        .expect(404, 'Bookmark Not Found')
+        .expect(404, 'Bookmark not found')
     })
 })
 
 describe('DELETE /bookmarks/:id', () => {
     it('removes the bookmark by ID from the store', () => {
-      const secondBookmark = store.bookmarks[1]
-      const expectedBookmarks = store.bookmarks.filter(s => s.id !== secondBookmark.id)
+      const firstBookmark = store.bookmarks[0]
+      const expectedBookmarks = store.bookmarks.filter(s => s.id !== firstBookmark.id)
       return supertest(app)
-        .delete(`/bookmarks/${secondBookmark.id}`)
+        .delete(`/bookmarks/${firstBookmark.id}`)
         .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
         .expect(204)
         .then(() => {
@@ -86,14 +84,13 @@ describe('DELETE /bookmarks/:id', () => {
       return supertest(app)
         .delete(`/bookmarks/doesnt-exist`)
         .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-        .expect(404, 'Bookmark Not Found')
+        .expect(404, 'Bookmark not found')
     })
 })
 
 describe('POST /bookmarks', () => {
     it(`responds with 400 missing 'title' if not supplied`, () => {
       const newBookmarkMissingTitle = {
-        // title: 'test-title',
         url: 'https://test.com',
         rating: 1,
       }
@@ -107,7 +104,6 @@ describe('POST /bookmarks', () => {
     it(`responds with 400 missing 'url' if not supplied`, () => {
       const newBookmarkMissingUrl = {
         title: 'test-title',
-        // url: 'https://test.com',
         rating: 1,
       }
       return supertest(app)
@@ -121,7 +117,6 @@ describe('POST /bookmarks', () => {
       const newBookmarkMissingRating = {
         title: 'test-title',
         url: 'https://test.com',
-        // rating: 1,
       }
       return supertest(app)
         .post(`/bookmarks`)
@@ -135,6 +130,7 @@ describe('POST /bookmarks', () => {
         title: 'test-title',
         url: 'https://test.com',
         rating: 'invalid',
+        description: 'description goes here'
       }
       return supertest(app)
         .post(`/bookmarks`)
@@ -148,6 +144,7 @@ describe('POST /bookmarks', () => {
         title: 'test-title',
         url: 'htp://invalid-url',
         rating: 1,
+        description: 'description goes here'
       }
       return supertest(app)
         .post(`/bookmarks`)
